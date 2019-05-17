@@ -1,0 +1,1 @@
+Message{To = 'email@gmail.com', content = 'Lecture4 2019-06-01T12:00', sentAt = 2019-05-17T18:17:18.028}

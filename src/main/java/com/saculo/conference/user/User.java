@@ -57,5 +57,9 @@ public class User {
     public int hashCode() {
         return Objects.hash(getUuid());
     }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }
 

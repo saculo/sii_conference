@@ -81,4 +81,9 @@ public class UserService {
         userDao.saveAndFlush(user);
     }
 
+    public void changeUserEmail(String email) {
+        loggedUser.setEmail(email);
+        userDao.saveAndFlush(loggedUser);
+    }
+
 }
