@@ -29,7 +29,14 @@ public class ConferenceApplication {
                     new Lecture("Lecture3", LocalDateTime.of(2019, 6, 1, 10, 0)),
                     new Lecture("Lecture4", LocalDateTime.of(2019, 6, 1, 12, 0)),
                     new Lecture("Lecture5", LocalDateTime.of(2019, 6, 1, 12, 0)),
-                    new Lecture("Lecture6", LocalDateTime.of(2019, 6, 1, 12, 0))
+                    new Lecture("Lecture6", LocalDateTime.of(2019, 6, 1, 12, 0)),
+                    new Lecture("Lecture7", LocalDateTime.of(2019, 6, 2, 10, 0)),
+                    new Lecture("Lecture8", LocalDateTime.of(2019, 6, 2, 10, 0)),
+                    new Lecture("Lecture9", LocalDateTime.of(2019, 6, 2, 10, 0)),
+                    new Lecture("Lecture10", LocalDateTime.of(2019, 6, 2, 12, 0)),
+                    new Lecture("Lecture11", LocalDateTime.of(2019, 6, 2, 12, 0)),
+                    new Lecture("Lecture12", LocalDateTime.of(2019, 6, 2, 12, 0))
+
             );
             List<User> users = Arrays.asList(
                     new User("login1", "email@gmail.com"),

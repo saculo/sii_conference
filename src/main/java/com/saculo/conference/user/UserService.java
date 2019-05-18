@@ -7,7 +7,6 @@ import com.saculo.conference.user.message.MessageManager;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,21 +27,13 @@ public class UserService {
     }
 
     public List<Lecture> getUserPossibleLectures(String login) {
-
         List<LocalDateTime> dates = getUserLectureDates(login);
-        List<Lecture> possibleLectures = new ArrayList<>();
-
         if(!dates.isEmpty()) {
-            lectureDao.findAll()
+            return lectureDao.findAll()
                     .stream()
                     .filter(Lecture::isNotFull)
-                    .forEach(lecture -> dates
-                            .stream()
-                            .filter(date -> !lecture.getStartsAt().equals(date))
-                            .map(date -> lecture)
-                            .forEach(possibleLectures::add));
-
-            return possibleLectures;
+                    .filter(lecture -> !dates.contains(lecture.getStartsAt()))
+                    .collect(Collectors.toList());
         }
         else
             return lectureDao.findAll();
@@ -73,6 +64,7 @@ public class UserService {
         Message message = new Message(
                 user.getEmail(), lecture.getTitle() + " " + lecture.getStartsAt(), LocalDateTime.now());
         messageManager.sendMessage(message);
+        loggedUser = user;
     }
 
     public void removeLectureFromUser(String login, Lecture lecture) {

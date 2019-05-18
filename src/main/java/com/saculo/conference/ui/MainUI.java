@@ -11,6 +11,9 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SpringUI
 public class MainUI extends UI {
 
@@ -34,9 +37,19 @@ public class MainUI extends UI {
     protected void init(VaadinRequest vaadinRequest) {
         addLayout();
         addLoginForm();
-        createBookingForm();
+        createLecturesTable();
         showUserLectures();
+        createBookingForm();
         createEmailEditForm();
+    }
+
+    private void createLecturesTable() {
+        Grid<Lecture> allLectures = new Grid<>();
+        allLectures.setItems(lectureDao.findAll());
+        allLectures.addColumn(Lecture::getStartsAt);
+        allLectures.addColumn(Lecture::getTitle);
+
+        root.addComponent(allLectures);
     }
 
     private void createEmailEditForm() {
@@ -60,9 +73,10 @@ public class MainUI extends UI {
         userEmail.setValue(loggedUserEmail);
     }
 
-    void showUserLectures() {
-        if(userService.getLoggedUser() != null)
-            createUserLecturesGrid(userService.getLoggedUser().getLogin());
+    private void showUserLectures() {
+        if(userService.getLoggedUser() != null) {
+            createUserLecturesGrid();
+        }
     }
 
     private void addLayout() {
@@ -71,14 +85,13 @@ public class MainUI extends UI {
         setContent(root);
     }
 
-    private void createUserLecturesGrid(String login) {
-        users.removeAllColumns();
+    private void createUserLecturesGrid() {
         if (userService.getLoggedUser() != null) {
             users.setItems(userService.getLoggedUser().getLectures());
             users.addColumn(Lecture::getTitle).setCaption("LECTURES");
-            users.addComponentColumn(lecture -> createDeleteButton(login, userService.getLoggedUser(), lecture));
+            users.addComponentColumn(lecture -> createDeleteButton(userService.getLoggedUser(), lecture));
 
-            root.replaceComponent(users, users);
+            root.addComponent(users);
         }
         else {
             Notification.show("Login nie istnieje");
@@ -111,8 +124,8 @@ public class MainUI extends UI {
                 else {
                     User user = new User(userLogin.getValue(), userEmail.getValue());
                     userDao.save(user);
-                    userService.setLoggedUser(user.getLogin());
-                    userService.addLectureToUser(userService.getLoggedUser().getLogin(), select.getValue());
+                    userService.addLectureToUser(user.getLogin(), select.getValue());
+                    select.setItems(userService.getUserPossibleLectures(user.getLogin()));
                     Page.getCurrent().reload();
                 }
             });
@@ -147,7 +160,7 @@ public class MainUI extends UI {
         root.addComponent(loginLayout);
     }
 
-    private Button createDeleteButton(String login, User user, Lecture lecture) {
+    private Button createDeleteButton(User user, Lecture lecture) {
         Button button = new Button("Delete!");
         button.addClickListener(click -> {
             ListDataProvider<Lecture> dataProvider = (ListDataProvider<Lecture>) users
