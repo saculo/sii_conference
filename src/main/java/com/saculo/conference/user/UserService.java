@@ -26,6 +26,10 @@ public class UserService {
         this.messageManager = messageManager;
     }
 
+    public boolean existsByLogin(String login) {
+        return userDao.existsByLogin(login);
+    }
+
     public List<Lecture> getUserPossibleLectures(String login) {
         List<LocalDateTime> dates = getUserLectureDates(login);
         if(!dates.isEmpty()) {
@@ -78,4 +82,7 @@ public class UserService {
         userDao.saveAndFlush(loggedUser);
     }
 
+    public void save(User user) {
+        userDao.save(user);
+    }
 }

@@ -11,15 +11,11 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @SpringUI
 public class MainUI extends UI {
 
     private UserService userService;
     private LectureDao lectureDao;
-    private UserDao userDao;
 
     private Grid<Lecture> users = new Grid<>();
     private ComboBox<Lecture> select = new ComboBox<>("My Select");
@@ -27,9 +23,8 @@ public class MainUI extends UI {
     private TextField userEmail = new TextField("Email");
     private VerticalLayout root;
 
-    public MainUI(LectureDao lectureDao, UserDao userDao, UserService userService) {
+    public MainUI(LectureDao lectureDao, UserService userService) {
         this.lectureDao = lectureDao;
-        this.userDao = userDao;
         this.userService = userService;
     }
 
@@ -118,12 +113,12 @@ public class MainUI extends UI {
         else {
             select.setItems(lectureDao.findAll());
             book.addClickListener(click -> {
-                if(userDao.existsByLogin(userLogin.getValue())) {
+                if(userService.existsByLogin(userLogin.getValue())) {
                     Notification.show("Login is already taken");
                 }
                 else {
                     User user = new User(userLogin.getValue(), userEmail.getValue());
-                    userDao.save(user);
+                    userService.save(user);
                     userService.addLectureToUser(user.getLogin(), select.getValue());
                     select.setItems(userService.getUserPossibleLectures(user.getLogin()));
                     Page.getCurrent().reload();
@@ -151,7 +146,7 @@ public class MainUI extends UI {
         loginLayout.addComponents(login, loginInput);
 
         login.addClickListener(clickEvent -> {
-            if(userDao.existsByLogin(loginInput.getValue())) {
+            if(userService.existsByLogin(loginInput.getValue())) {
                 userService.setLoggedUser(loginInput.getValue());
             }
             Page.getCurrent().reload();
